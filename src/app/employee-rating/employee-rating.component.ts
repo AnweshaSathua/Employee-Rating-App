@@ -91,7 +91,7 @@ goToNextCard() {
   onEmployeeSelect(selectedId: string, index: number) {
     if (!selectedId) return;
 
-    this.http.get<any>(`http://localhost:8080/rating/save/${selectedId}`).subscribe({
+    this.http.get<any>(`http://localhost:8080/api/fetchAll/${selectedId}`).subscribe({
       next: (data) => {
         this.employeeForms[index].employeeName = data.employeeName;
         this.employeeForms[index].designation = data.designation;
@@ -126,7 +126,7 @@ goToNextCard() {
       return;
     }
 
-    this.http.post('http://localhost:8080/rating/save-multiple', payload).subscribe({
+    this.http.post('http://localhost:8080/rating/bulkSave', payload).subscribe({
       next: (res) => {
         console.log('✅ Ratings submitted:', res);
         alert('All ratings submitted successfully!');
