@@ -44,7 +44,7 @@ throw new Error('Method not implemented.');
   }
 
   fetchEmployees() {
-    this.http.get<any[]>('http://localhost:8080/employees').subscribe({
+    this.http.get<any[]>('http://localhost:8080/api/fetchAll').subscribe({
       next: (data) => {
         this.employees = data;
       },
