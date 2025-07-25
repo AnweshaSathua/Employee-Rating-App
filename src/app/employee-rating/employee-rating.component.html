@@ -30,9 +30,9 @@
           [(ngModel)]="empForm.employeeId"
           name="employeeId{{i}}"
           (change)="onEmployeeSelect(empForm.employeeId, i)">
-          <option value="" disabled>Select Employee ID</option>
-          <option *ngFor="let emp of employees" [value]="emp.id">
-            {{ emp.id }} - {{ emp.name }}
+          <option value="">Select Employee ID</option>
+          <option *ngFor="let emp of employees" [value]="emp.employeeId">
+            {{ emp.employeeId }} - {{ emp.name }}
           </option>
         </select>
       </div>
