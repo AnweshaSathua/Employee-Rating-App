@@ -125,7 +125,7 @@ goToNextCard() {
       return;
     }
 
-    this.http.post('http://localhost:8080/rating/save-multiple', payload).subscribe({
+    this.http.post('http://localhost:8080/rating/bulkSave', payload).subscribe({
       next: (res) => {
         console.log('✅ Ratings submitted:', res);
         alert('All ratings submitted successfully!');
