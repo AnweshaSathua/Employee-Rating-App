@@ -44,7 +44,7 @@ throw new Error('Method not implemented.');
   }
 
   fetchEmployees() {
-    this.http.get<any[]>('http://localhost:8080/api/fetchAll').subscribe({
+    this.http.get<any[]>('http://localhost:8080/employees').subscribe({
       next: (data) => {
         this.employees = data;
       },
@@ -89,25 +89,24 @@ goToNextCard() {
 
 
   onEmployeeSelect(selectedId: string, index: number) {
-    if (!selectedId) return;
-
-    this.http.get<any>(`http://localhost:8080/api/fetchAll/${selectedId}`).subscribe({
-      next: (data) => {
-        this.employeeForms[index].employeeName = data.employeeName;
-        this.employeeForms[index].designation = data.designation;
-        this.employeeForms[index].project_name = data.projectName;
-
-        // Initialize criteria values
-        this.performanceCriteria.forEach(criteria => {
-          this.employeeForms[index].formData[criteria.key] = data[criteria.key] ?? null;
-        });
-      },
-      error: (err) => {
-        console.error('❌ Failed to fetch employee details:', err);
-        alert('Failed to fetch employee details.');
-      }
-    });
+  if (!selectedId) return;
+ 
+  // Find the employee in the local array by employeeId
+  const data = this.employees.find(emp => emp.employeeId === selectedId);
+  if (!data) {
+    alert('Employee not found!');
+    return;
   }
+ 
+  this.employeeForms[index].employeeName = data.employeeName;
+  this.employeeForms[index].designation = data.designation;
+  this.employeeForms[index].project_name = data.projectName;
+ 
+  // Initialize criteria values
+  this.performanceCriteria.forEach(criteria => {
+    this.employeeForms[index].formData[criteria.key] = data[criteria.key] ?? null;
+  });
+}
 
   toggleTheme(): void {
     this.isDarkMode = !this.isDarkMode;
@@ -126,7 +125,7 @@ goToNextCard() {
       return;
     }
 
-    this.http.post('http://localhost:8080/rating/bulkSave', payload).subscribe({
+    this.http.post('http://localhost:8080/rating/save-multiple', payload).subscribe({
       next: (res) => {
         console.log('✅ Ratings submitted:', res);
         alert('All ratings submitted successfully!');
