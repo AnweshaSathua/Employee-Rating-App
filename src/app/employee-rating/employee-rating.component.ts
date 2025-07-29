@@ -44,7 +44,7 @@ throw new Error('Method not implemented.');
   }
 
   fetchEmployees() {
-    this.http.get<any[]>('http://localhost:8080/api/fetchAll').subscribe({
+    this.http.get<any[]>('https://docker-employee-rating-4.onrender.com/fetchAll').subscribe({
       next: (data) => {
         this.employees = data;
       },
@@ -125,7 +125,7 @@ goToNextCard() {
       return;
     }
 
-    this.http.post('http://localhost:8080/rating/bulkSave', payload).subscribe({
+    this.http.post('https://docker-employee-rating-4.onrender.com/bulkSave', payload).subscribe({
       next: (res) => {
         console.log('✅ Ratings submitted:', res);
         alert('All ratings submitted successfully!');
