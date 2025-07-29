@@ -125,7 +125,7 @@ goToNextCard() {
       return;
     }
 
-    this.http.post('https://docker-employee-rating-4.onrender.com/bulkSave', payload).subscribe({
+    this.http.post('https://docker-employee-rating-4.onrender.com/api/bulkSave', payload).subscribe({
       next: (res) => {
         console.log('✅ Ratings submitted:', res);
         alert('All ratings submitted successfully!');
