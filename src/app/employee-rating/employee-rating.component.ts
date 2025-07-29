@@ -44,7 +44,7 @@ throw new Error('Method not implemented.');
   }
 
   fetchEmployees() {
-    this.http.get<any[]>('https://docker-employee-rating-4.onrender.com/fetchAll').subscribe({
+    this.http.get<any[]>('https://docker-employee-rating-4.onrender.com/api/fetchAll').subscribe({
       next: (data) => {
         this.employees = data;
       },
