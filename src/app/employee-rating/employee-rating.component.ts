@@ -44,15 +44,23 @@ throw new Error('Method not implemented.');
   }
 
   fetchEmployees() {
-    this.http.get<any[]>('https://docker-employee-rating-4.onrender.com/api/fetchAll').subscribe({
+  const urlParams = new URLSearchParams(window.location.search);
+  const teamLeadEmail = urlParams.get('teamLeadEmail');
+
+  if (teamLeadEmail) {
+    this.http.get<any[]>(`https://docker-employee-rating-4.onrender.com/api/fetchAll/${teamLeadEmail}`).subscribe({
       next: (data) => {
-        this.employees = data.filter(emp => !emp.noticePeriod && !emp.probationPeriod);
+        this.employees = data; // No further filtering needed if backend handles it
       },
       error: (err) => {
         console.error('Error fetching employee list:', err);
       }
     });
+  } else {
+    console.error('Team lead email not found in URL');
   }
+}
+
 
 
   currentIndex = 0;
