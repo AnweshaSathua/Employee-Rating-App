@@ -50,7 +50,7 @@ throw new Error('Method not implemented.');
   if (teamLeadEmail) {
     this.http.get<any[]>(`https://docker-employee-rating-4.onrender.com/api/fetchAll/${teamLeadEmail}`).subscribe({
       next: (data) => {
-        this.employees = data; // No further filtering needed if backend handles it
+        this.employees = data.filter(emp=> !emp.noticePeriod && !emp.probationPeriod); // No further filtering needed if backend handles it
       },
       error: (err) => {
         console.error('Error fetching employee list:', err);
