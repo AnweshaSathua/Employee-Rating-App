@@ -2,15 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/employee-rating-app/server/server.mjs",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "dist/employee-rating-app/browser/**",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist/employee-rating-app/browser" }
     }
   ],
   "routes": [
-    { "src": "/.*", "dest": "/server/server.mjs" }
+    { "src": "/.*", "dest": "/index.html" }
   ]
 }
