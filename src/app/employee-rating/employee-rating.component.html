@@ -1,125 +1,145 @@
-<!-- Loop through all employee forms -->
-<div *ngFor="let empForm of employeeForms; let i = index" 
-     class="employee-rating-container" 
-     [class.active]="i === currentIndex"
-     [class.hidden]="i !== currentIndex">
-
-  <!-- Header -->
-  <header class="form-header">
-    <div class="logo-left">
-      <img src="assets/Logo.png" alt="Company Logo" />
-    </div>
-    <div class="form-title">
-      <h2>Employee Performance Rating</h2>
-    </div>
-    <div
-      class="theme-toggle-icon"
-      (click)="toggleTheme()"
-      [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-      <span *ngIf="!isDarkMode">🌞</span>
-      <span *ngIf="isDarkMode">🌙</span>
-    </div>
-  </header>
-
-  <!-- Employee Info -->
-  <div class="employee-header">
-    <div class="employee-fields">
-      <div class="employee-field">
-        <label>🆔 Employee ID:</label>
-        <select
-          [(ngModel)]="empForm.employeeId"
-          name="employeeId{{i}}"
-          (change)="onEmployeeSelect(empForm.employeeId, i)">
-          <option value="">Select Employee ID</option>
-          <option *ngFor="let emp of employees" [value]="emp.employeeId">
-            {{ emp.employeeId }} - {{ emp.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="employee-field">
-        <label>👤 Employee Name:</label>
-        <input
-          type="text"
-          [(ngModel)]="empForm.employeeName"
-          name="employeeName{{i}}"
-          readonly
-          placeholder="Auto-filled" />
-      </div>
-
-      <div class="employee-field">
-        <label>💼 Designation:</label>
-        <input
-          type="text"
-          [(ngModel)]="empForm.designation"
-          name="designation{{i}}"
-          readonly
-          placeholder="Auto-filled" />
-      </div>
-
-      <div class="employee-field">
-        <label>📁 Project Name:</label>
-        <input
-          type="text"
-          [(ngModel)]="empForm.project_name"
-          name="projectName{{i}}"
-          readonly
-          placeholder="Auto-filled" />
-      </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-      <button class="prev-btn" (click)="goToPreviousCard()" *ngIf="i > 0">
-    <i class="fa fa-arrow-left"></i> Previous
-  </button>
-
-      <button class="next-btn" (click)="goToNextCard()" *ngIf="i < employeeForms.length - 1">
-        Next <i class="fa fa-arrow-right"></i>
-      </button>
-
-      <button class="add-more-btn" (click)="addEmployeeForm()">
-        <i class="fa fa-user-plus"></i> Add More
-      </button>
-
-      <button class="remove-btn" (click)="removeEmployeeForm(i)" *ngIf="employeeForms.length > 1">
-        <i class="fa fa-trash"></i> Remove
-      </button>
-    </div>
+<!-- Header -->
+<div class="form-header">
+  <div class="logo-left">
+    <img src="assets/Logo.png" alt="Company Logo" />
   </div>
+  <div class="form-title">
+    <h2>Employee Performance Rating</h2>
+  </div>
+  <div
+    class="theme-toggle-icon"
+    (click)="toggleTheme()"
+    [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+    <span *ngIf="!isDarkMode">🌞</span>
+    <span *ngIf="isDarkMode">🌙</span>
+  </div>
+</div>
 
-  <!-- Rating Form Table -->
-  <form class="rating-form">
-    <table>
-      <thead>
-        <tr>
-          <th>Criteria</th>
-          <th *ngFor="let rating of ratings">{{ rating }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let criteria of performanceCriteria">
-          <td>{{ criteria.label }}</td>
-          <td *ngFor="let rating of ratings">
-            <input
-              type="radio"
-              [name]="criteria.key + '_' + i"
-              [value]="rating"
-              [(ngModel)]="empForm.formData[criteria.key]"
-              required />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </form>
+<!-- Employee Forms Container -->
+<div class="employee-forms-container">
+  <!-- Loop through all employee forms -->
+  <div *ngFor="let empForm of employeeForms; let i = index" class="employee-form-section">
+    
+    <!-- Collapsed Employee Row (when form is collapsed) -->
+    <div *ngIf="empForm.isCollapsed" class="collapsed-employee-row" (click)="expandForm(i)">
+      <div class="collapsed-info">
+        <span class="employee-id">🆔 {{empForm.employeeId}}</span>
+        <span class="employee-name">👤 {{empForm.employeeName}}</span>
+        <span class="employee-designation">💼 {{empForm.designation}}</span>
+        <span class="project-name">📁 {{empForm.project_name}}</span>
+      </div>
+      <div class="collapsed-actions">
+        <span class="expand-icon">▶</span>
+        <span class="status-badge">✓ Rated</span>
+      </div>
+      <!-- Rating Summary in Collapsed Row -->
+      <div class="collapsed-rating-summary">
+        <div *ngFor="let crit of performanceCriteria; let last = last">
+          <span [innerHTML]="crit.label"></span>: 
+          {{ empForm.formData[crit.key] || '-' }}
+          <span *ngIf="!last"> | </span>
+        </div>
+      </div>
+    </div>
 
-  <hr />
+    <!-- Full Employee Rating Form (when not collapsed) -->
+    <div *ngIf="!empForm.isCollapsed" class="employee-rating-container">
 
-  <!-- Final Submit Button: ONLY visible in last card -->
-  <div style="text-align: center; margin: 40px 0 60px;">
-    <button class="submit-btn" (click)="submitAll()">
-      <i class="fa fa-paper-plane"></i> Submit
-    </button>
+      <!-- Employee Info -->
+      <div class="employee-header">
+        <div class="employee-fields">
+          
+          <!-- Employee ID field -->
+          <div class="employee-field">
+            <label (click)="toggleRatingSection(i)">🆔 Employee ID:</label>
+            <select
+              [(ngModel)]="empForm.employeeId"
+              name="employeeId{{i}}"
+              (change)="onEmployeeSelect(empForm.employeeId, i)">
+              <option value="" disabled>Select Employee ID</option>
+              <option *ngFor="let emp of employees" [value]="emp.id">
+                {{ emp.id }} - {{ emp.name }}
+              </option>
+            </select>
+
+            <span class="toggle-arrow" (click)="toggleRatingSection(i)">{{ empForm.showRating ? '▼' : '▶' }} </span>
+      </div>
+
+          <!-- Employee Name -->
+          <div class="employee-field">
+            <label>👤 Employee Name:</label>
+            <input type="text" [value]="empForm.employeeName" readonly />
+          </div>
+
+          <!-- Designation -->
+          <div class="employee-field">
+            <label>💼 Designation:</label>
+            <input type="text" [value]="empForm.designation" readonly />
+          </div>
+
+          <!-- Project Name -->
+          <div class="employee-field">
+            <label>📁 Project Name:</label>
+            <input type="text" [value]="empForm.project_name" readonly />
+          </div>
+        </div>
+
+        <!-- Rating Form -->
+        <form class="rating-form" *ngIf="empForm.showRating">
+          <table>
+            <thead>
+              <tr>
+                <th>Criteria</th>
+                <th *ngFor="let rating of ratings">{{ rating }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let criteria of performanceCriteria">
+                <td>{{ criteria.label }}</td>
+                <td *ngFor="let rating of ratings">
+                  <input
+                    type="radio"
+                    [name]="criteria.key + '_' + i"
+                    [value]="rating"
+                    [(ngModel)]="empForm.formData[criteria.key]"
+                    required />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+
+        <!-- Rating Summary -->
+        <div *ngIf="empForm.showSummary" class="rating-summary">
+          <div *ngFor="let crit of performanceCriteria; let last = last">
+            <span [innerHTML]="crit.label"></span>: 
+            {{ empForm.formData[crit.key] || '-' }}
+            <span *ngIf="!last"> | </span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+          
+          <button class="add-more-btn" (click)="addEmployeeForm()">
+            <i class="fa fa-user-plus"></i> Add More
+          </button>
+
+          <button class="remove-btn" (click)="removeEmployeeForm(i)" *ngIf="employeeForms.length > 1">
+            <i class="fa fa-trash"></i> Remove
+          </button>
+        </div>
+
+        <hr />
+
+        <!-- Final Submit -->
+        <div style="text-align: center; margin: 40px 0 60px;" *ngIf="i === employeeForms.length - 1">
+          <button class="submit-btn" (click)="submitAll()">
+            <i class="fa fa-paper-plane"></i> Submit All Ratings
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
